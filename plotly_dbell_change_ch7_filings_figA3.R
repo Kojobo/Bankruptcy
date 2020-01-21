@@ -1,7 +1,7 @@
 library(readxl)
-
 url <- "https://www.uscourts.gov/file/10864/download"
-destfile <- "filings_2001.xls"
+destfile <- "download.xls"
+curl::curl_download(url, destfile)
 filings_01 <- read_excel(destfile, range = "a7:f136")
 
 library(openxlsx)
