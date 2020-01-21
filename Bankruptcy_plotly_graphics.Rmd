@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(plotly)
+library(tidyverse)
 bank_1 <- read.csv('bank_01_07.csv')
 bank_2 <- read.csv('bank_08_13.csv')
 bank_3 <- read.csv('bank_14_18.csv')
@@ -15,7 +16,7 @@ bank_3 <- read.csv('bank_14_18.csv')
 bankruptcy <- rbind(bank_1, bank_2, bank_3)
 ```
 
-```{r}
+```{r Map1_B2, echo = F}
 
 #find count of asset cases by each state #includes Puerto Rico and Guam, does NOT include North Carolina and Alabama 
 
@@ -41,6 +42,18 @@ plot_geo(locationmode = 'USA-states') %>%
 
 ```
 
+```{r Alternative to B2, echo = F}
+bankruptcy %>% 
+  group_by(state) %>% 
+  summarise(cases = n()) %>% 
+  mutate(state = fct_reorder(state, cases)) %>% 
+  plot_ly() %>% 
+  add_markers(
+    x = ~cases, y = ~state
+  ) %>% 
+  layout(xaxis = list(title = 'Asset Cases Closed 2001 - 2018'))
+
+```
 
 
 ```{r DBELL, echo=FALSE}
@@ -122,12 +135,16 @@ ch7_filings %>%
 
 ```
 
-## Including Plots
+```{r Fig B5, echo=FALSE}
+bankruptcy %>% 
+  group_by(state) %>% 
+  summarise(total_assets = sum(total_gross_receipts)) %>% 
+  mutate(State = fct_reorder(state, total_assets)) %>% 
+  plot_ly() %>% 
+  add_markers(
+    x = ~total_assets, y = ~State
+  ) %>% 
+  layout(xaxis = list(title = 'Total Assets 2001 - 2018'))
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
